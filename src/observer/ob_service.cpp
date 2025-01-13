@@ -124,7 +124,7 @@ namespace observer
 ObSchemaReleaseTimeTask::ObSchemaReleaseTimeTask()
 : schema_updater_(nullptr), is_inited_(false)
 {}
-
+// INSTRUMENT_FUNC
 int ObSchemaReleaseTimeTask::init(ObServerSchemaUpdater &schema_updater, int tg_id)
 {
   int ret = OB_SUCCESS;
@@ -224,7 +224,7 @@ ObService::ObService(const ObGlobalContext &gctx)
 ObService::~ObService()
 {
 }
-
+// INSTRUMENT_FUNC
 int ObService::init(common::ObMySQLProxy &sql_proxy,
                     share::ObIAliveServerTracer &server_tracer)
 {
@@ -422,7 +422,7 @@ void ObService::wait()
   }
   FLOG_INFO("[OBSERVICE_NOTICE] wait ob_service end");
 }
-
+// INSTRUMENT_FUNC
 int ObService::destroy()
 {
   int ret = OB_SUCCESS;
@@ -741,7 +741,7 @@ int ObService::backup_ls_data(const obrpc::ObBackupDataArg &arg)
   }
   return ret;
 }
-
+// INSTRUMENT_FUNC
 int ObService::backup_completing_log(const obrpc::ObBackupComplLogArg &arg)
 {
   int ret = OB_SUCCESS;
@@ -981,7 +981,7 @@ int ObService::check_sys_task_exist(
   }
   return ret;
 }
-
+// INSTRUMENT_FUNC
 int ObService::check_migrate_task_exist(
     const share::ObTaskId &arg, bool &res)
 {
@@ -1240,7 +1240,7 @@ int ObService::check_modify_time_elapsed(
   }
   return ret;
 }
-
+// INSTRUMENT_FUNC
 int ObService::check_schema_version_elapsed(
     const obrpc::ObCheckSchemaVersionElapsedArg &arg,
     obrpc::ObCheckSchemaVersionElapsedResult &result)
@@ -1380,7 +1380,7 @@ int ObService::check_medium_compaction_info_list_cnt(
 {
   return ObTabletSplitUtil::check_medium_compaction_info_list_cnt(arg, result);
 }
-
+// INSTRUMENT_FUNC
 int ObService::prepare_tablet_split_task_ranges(
     const obrpc::ObPrepareSplitRangesArg &arg,
     obrpc::ObPrepareSplitRangesRes &result)
@@ -1422,7 +1422,7 @@ int ObService::check_ddl_tablet_merge_status(
         ObDDLKvMgrHandle ddl_kv_mgr_handle;
         ObLSService *ls_service = nullptr;
         bool status = false;
-
+        // INSTRUMENT_BB
         if (OB_ISNULL(ls_service = MTL(ObLSService *))) {
           ret = OB_ERR_UNEXPECTED;
           LOG_WARN("error unexpected, get ls service failed", K(ret));
@@ -1622,6 +1622,7 @@ int ObService::bootstrap(const obrpc::ObBootstrapArg &arg)
                                  *gctx_.rs_rpc_proxy_);
     ObAddr master_rs;
     bool server_empty = false;
+    // INSTRUMENT_BB
     if (OB_FAIL(check_server_empty(server_empty))) {
       BOOTSTRAP_LOG(WARN, "check_server_empty failed", K(ret));
     } else if (!server_empty) {
@@ -1684,6 +1685,7 @@ int ObService::check_deployment_mode_match(
       LOG_INFO("deployment mode not match", K(GCTX.startup_mode_), K(arg));
     }
   }
+  // INSTRUMENT_BB
   return ret;
 }
 
@@ -1757,6 +1759,7 @@ int ObService::check_server_empty_with_result(const obrpc::ObCheckServerEmptyArg
       }
     }
   }
+  // INSTRUMENT_BB
   return ret;
 }
 int ObService::prepare_server_for_adding_server(
@@ -1841,7 +1844,7 @@ int ObService::prepare_server_for_adding_server(
         }
       }
     }
-
+    // INSTRUMENT_BB
     if (FAILEDx(zone.assign(GCONF.zone.str()))) {
       LOG_WARN("fail to assign zone", KR(ret), K(GCONF.zone.str()));
     } else if (OB_FAIL(build_version_string.assign(build_version))) {
@@ -1971,6 +1974,7 @@ int ObService::get_partition_count(obrpc::ObGetPartitionCountResult &result)
   // } else if (OB_FAIL(gctx_.par_ser_->get_partition_count(result.partition_count_))) {
   //   LOG_WARN("failed to get partition count", K(ret));
   // }
+  // INSTRUMENT_BB
   return ret;
 }
 
@@ -2153,6 +2157,7 @@ int ObService::convert_tenant_max_key_version(
     const ObIArray<std::pair<uint64_t, ObLeaseResponse::TLRpKeyVersion> > &max_key_version,
     ObIArray<std::pair<uint64_t, uint64_t> > &got_version_array)
 {
+  // INSTRUMENT_BB
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(!inited_)) {
     ret = OB_NOT_INIT;
@@ -2425,6 +2430,7 @@ int ObService::request_heartbeat(ObLeaseRequest &lease_request)
   } else if (OB_FAIL(heartbeat_process_.init_lease_request(lease_request))) {
     LOG_WARN("init_lease_request failed", K(ret));
   }
+  // INSTRUMENT_BB
   return ret;
 }
 
