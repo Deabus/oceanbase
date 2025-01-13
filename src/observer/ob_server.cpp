@@ -291,7 +291,7 @@ int ObServer::parse_mode()
   }
   return ret;
 }
-
+// INSTRUMENT_FUNC
 int ObServer::init(const ObServerOptions &opts, const ObPLogWriterCfg &log_cfg)
 {
   FLOG_INFO("[OBSERVER_NOTICE] start to init observer");
@@ -622,7 +622,7 @@ int ObServer::init(const ObServerOptions &opts, const ObPLogWriterCfg &log_cfg)
   return ret;
 }
 
-
+// INSTRUMENT_FUNC
 void ObServer::destroy()
 {
   // observer.destroy() be called under two scenarios:
@@ -939,7 +939,7 @@ void ObServer::destroy()
     arb_gcs_.destroy();
     FLOG_INFO("ArbGarbageCollectSerivce destroyed");
 #endif
-
+  // INSTRUMENT_BB
     FLOG_INFO("begin to destroy WR service");
     wr_service_.destroy();
     FLOG_INFO("WR service destroyed");
@@ -973,7 +973,7 @@ int ObServer::start_sig_worker_and_handle()
   }
   return ret;
 }
-
+// INSTRUMENT_FUNC
 int ObServer::start()
 {
   int ret = OB_SUCCESS;
@@ -1200,7 +1200,7 @@ int ObServer::start()
       }
     }
 #endif
-
+    // INSTRUMENT_BB
     if (OB_SUCC(ret)) {
       FLOG_INFO("[OBSERVER_NOTICE] server instance start succeed");
       LOG_DBA_INFO_V2(OB_SERVER_INSTANCE_START_SUCCESS,
@@ -2053,7 +2053,7 @@ int ObServer::wait()
     FLOG_INFO("begin to wait storage ha diagnose");
     ObStorageHADiagService::instance().wait();
     FLOG_INFO("wait storage ha diagnose success");
-
+    // INSTRUMENT_BB
     FLOG_INFO("begin to wait timer service");
     ObTimerService::get_instance().wait();
     FLOG_INFO("wait timer service success");
@@ -2308,7 +2308,7 @@ int ObServer::init_local_ip_and_devname()
 int ObServer::init_self_addr()
 {
   int ret = OB_SUCCESS;
-
+  // INSTRUMENT_BB
   int32_t local_port = static_cast<int32_t>(config_.rpc_port);
   if (strlen(config_.local_ip) > 0) {
     self_addr_.set_ip_addr(config_.local_ip, local_port);
@@ -3255,7 +3255,7 @@ int ObServer::get_network_speed_from_config_file(int64_t &network_speed)
   FILE *fp = nullptr;
   char *buf = nullptr;
   static int nic_rate_file_exist = 1;
-
+// INSTRUMENT_BB
   if (OB_ISNULL(buf = static_cast<char *>(ob_malloc(MAX_NIC_CONFIG_FILE_SIZE + 1,
                                                            ObModIds::OB_BUFFER)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
@@ -3623,6 +3623,7 @@ ObServer::ObRefreshTimeTask::ObRefreshTimeTask()
 int ObServer::ObRefreshTimeTask::init(ObServer *obs, int tg_id)
 {
   int ret = OB_SUCCESS;
+  // INSTRUMENT_BB
   if (OB_UNLIKELY(is_inited_)) {
     ret = OB_INIT_TWICE;
     LOG_ERROR("ObRefreshTimeTask has already been inited", KR(ret));
