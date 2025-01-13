@@ -3,9 +3,15 @@
 TOPDIR=`readlink -f \`dirname $0\``
 BUILD_SH=$TOPDIR/build.sh
 
+export CC=/opt/instrumentor/llvm_mode/afl-clang-fast
+export CXX=/opt/instrumentor/llvm_mode/afl-clang-fast++
+
 DEP_DIR=${TOPDIR}/deps/3rd/usr/local/oceanbase/deps/devel
 TOOLS_DIR=${TOPDIR}/deps/3rd/usr/local/oceanbase/devtools
-CMAKE_COMMAND="${TOOLS_DIR}/bin/cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1"
+#CMAKE_COMMAND="${TOOLS_DIR}/bin/cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1"
+CMAKE_COMMAND="${TOOLS_DIR}/bin/cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
+-DCMAKE_C_COMPILER=/opt/instrumentor/llvm_mode/afl-clang-fast \
+-DCMAKE_CXX_COMPILER=/opt/instrumentor/llvm_mode/afl-clang-fast++"
 
 CPU_CORES=`grep -c ^processor /proc/cpuinfo`
 KERNEL_RELEASE=`grep -Po 'release [0-9]{1}' /etc/issue 2>/dev/null`
