@@ -75,7 +75,7 @@ static bool enable_new_sql_nio()
 {
   return GCONF._enable_new_sql_nio;
 }
-
+// INSTRUMENT_FUNC
 static int update_tcp_keepalive_parameters_for_sql_nio_server(int tcp_keepalive_enabled, int64_t tcp_keepidle, int64_t tcp_keepintvl, int64_t tcp_keepcnt)
 {
   int ret = OB_SUCCESS;
@@ -200,7 +200,7 @@ void ObSrvNetworkFrame::destroy()
     obmysql::global_sql_nio_server->destroy();
   }
 }
-
+// INSTRUMENT_FUNC
 int ObSrvNetworkFrame::start()
 {
   int ret = net_.start();
@@ -324,7 +324,7 @@ int ObSrvNetworkFrame::extract_expired_time(const char *const cert_file, int64_t
   }
   return ret;
 }
-
+// INSTRUMENT_FUNC
 uint64_t ObSrvNetworkFrame::get_ssl_file_hash(const char *intl_file[3], const char *sm_file[5], bool &file_exist)
 {
   file_exist = false;
@@ -445,6 +445,7 @@ static int ob_add_client_CA_list_from_sys_table(SSL_CTX *ctx)
 {
   int ret = OB_SUCCESS;
   uint64_t data_version = 0;
+// INSTRUMENT_BB
   if (OB_ISNULL(ctx)) {
     ret = OB_INVALID_ARGUMENT;
     LOG_ERROR("ctx is NULL", K(ret));
@@ -494,6 +495,7 @@ static int ob_add_client_CA_list_from_sys_table(SSL_CTX *ctx)
       }
     }
   }
+    // INSTRUMENT_BB
   if (OB_TENANT_NOT_IN_SERVER == ret && SS_SERVING != GCTX.status_) {
     ret = OB_SUCCESS;
     LOG_WARN("observice is not serving do not load CA from sys table");
@@ -589,7 +591,7 @@ int ObSrvNetworkFrame::reload_ssl_config()
 #endif
         }
       }
-
+// INSTRUMENT_BB
       if (OB_SUCC(ret)) {
         int64_t ssl_key_expired_time = 0;
         if (!use_bkmi && !use_sm &&OB_FAIL(extract_expired_time(OB_SSL_CERT_FILE, ssl_key_expired_time))) {
@@ -666,9 +668,10 @@ int ObSrvNetworkFrame::rpc_shutdown()
 
 int ObSrvNetworkFrame::high_prio_rpc_shutdown()
 {
+    // INSTRUMENT_BB
   return net_.high_prio_rpc_shutdown();
 }
-
+// INSTRUMENT_FUNC
 int ObSrvNetworkFrame::batch_rpc_shutdown()
 {
   return net_.batch_rpc_shutdown();
@@ -731,6 +734,7 @@ ObReqTransport *ObSrvNetworkFrame::get_batch_rpc_req_transport()
 
 ObNetEasy *ObSrvNetworkFrame::get_net_easy()
 {
+    // INSTRUMENT_BB
   return &net_;
 }
 
@@ -752,7 +756,7 @@ void ObSrvNetworkFrame::rpc_stop()
   ussl_stop();
   obrpc::global_poc_server.stop();
 }
-
+// INSTRUMENT_FUNC
 int ObSrvNetworkFrame::reload_rpc_auth_method()
 {
   int ret = OB_SUCCESS;
